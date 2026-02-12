@@ -7,13 +7,29 @@ function initWeb4U() {
 
     var root = document.documentElement;
     var storedTheme = null;
+    var themeLocked = false;
+    function isValidTheme(theme) {
+        return theme === "light" || theme === "dark";
+    }
     try {
         storedTheme = localStorage.getItem("theme");
+        themeLocked = localStorage.getItem("theme_locked") === "1";
     } catch (error) {
         storedTheme = null;
+        themeLocked = false;
     }
-    var preferredTheme = "light";
-    var activeTheme = storedTheme || preferredTheme;
+    if (!isValidTheme(storedTheme)) {
+        storedTheme = null;
+    }
+    var activeTheme = themeLocked && storedTheme ? storedTheme : "light";
+    if (!themeLocked) {
+        try {
+            localStorage.setItem("theme", "light");
+            localStorage.setItem("theme_locked", "0");
+        } catch (error) {
+            // Ignore storage errors; default still applies for current page view.
+        }
+    }
 
     function applyTheme(theme) {
         root.setAttribute("data-theme", theme);
@@ -155,6 +171,7 @@ function initWeb4U() {
                 activeTheme = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
                 try {
                     localStorage.setItem("theme", activeTheme);
+                    localStorage.setItem("theme_locked", "1");
                 } catch (error) {
                     // Ignore storage errors, theme still works for current page view.
                 }
