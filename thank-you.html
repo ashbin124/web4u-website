@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
     <title>Web4U | Thank You</title>
     <meta name="description" content="Thank you for contacting Web4U. We will get back to you shortly.">
     <meta name="robots" content="noindex, follow">
@@ -10,13 +11,8 @@
     <script>
         (function () {
             try {
-                var theme = localStorage.getItem("theme");
-                if (!theme && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-                    theme = "dark";
-                }
-                if (theme) {
-                    document.documentElement.setAttribute("data-theme", theme);
-                }
+                var theme = localStorage.getItem("theme") || "light";
+                document.documentElement.setAttribute("data-theme", theme);
             } catch (e) {}
         })();
     </script>

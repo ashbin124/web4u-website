@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
     <title>Web4U | Home</title>
     <meta name="description" content="Web4U crafts premium business websites with strategy, design, development, and long-term support.">
     <meta property="og:title" content="Web4U | Home">
@@ -18,13 +19,8 @@
     <script>
         (function () {
             try {
-                var theme = localStorage.getItem("theme");
-                if (!theme && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-                    theme = "dark";
-                }
-                if (theme) {
-                    document.documentElement.setAttribute("data-theme", theme);
-                }
+                var theme = localStorage.getItem("theme") || "light";
+                document.documentElement.setAttribute("data-theme", theme);
             } catch (e) {}
         })();
     </script>

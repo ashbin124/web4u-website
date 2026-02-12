@@ -12,14 +12,14 @@ function initWeb4U() {
     } catch (error) {
         storedTheme = null;
     }
-    var preferredTheme = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    var preferredTheme = "light";
     var activeTheme = storedTheme || preferredTheme;
 
     function applyTheme(theme) {
         root.setAttribute("data-theme", theme);
         var toggleButtons = document.querySelectorAll(".theme-toggle");
         toggleButtons.forEach(function (toggleBtn) {
-            toggleBtn.textContent = theme === "dark" ? "Dark" : "Light";
+            toggleBtn.textContent = theme === "dark" ? "Light" : "Dark";
             toggleBtn.setAttribute("aria-label", theme === "dark" ? "Switch to light mode" : "Switch to dark mode");
         });
     }
