@@ -1103,7 +1103,9 @@ textarea {
     }
 
     .theme-toggle {
-        display: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .mobile-cta {
