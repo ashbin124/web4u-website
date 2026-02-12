@@ -218,7 +218,7 @@ function initWeb4U() {
     if (nextInput) {
         var configuredSiteUrl = "";
         var config = window.WEB4U_CONFIG || {};
-        if (typeof config.siteUrl === "string" && /^https?:\/\//.test(config.siteUrl) && config.siteUrl !== "https://your-domain.com") {
+        if (typeof config.siteUrl === "string" && /^https?:\/\//.test(config.siteUrl)) {
             configuredSiteUrl = config.siteUrl.replace(/\/+$/, "");
         }
         if (configuredSiteUrl) {
