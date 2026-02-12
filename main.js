@@ -17,11 +17,11 @@ function initWeb4U() {
 
     function applyTheme(theme) {
         root.setAttribute("data-theme", theme);
-        var toggleBtn = document.querySelector(".theme-toggle");
-        if (toggleBtn) {
+        var toggleButtons = document.querySelectorAll(".theme-toggle");
+        toggleButtons.forEach(function (toggleBtn) {
             toggleBtn.textContent = theme === "dark" ? "Light" : "Dark";
             toggleBtn.setAttribute("aria-label", theme === "dark" ? "Switch to light mode" : "Switch to dark mode");
-        }
+        });
     }
 
     applyTheme(activeTheme);
@@ -40,19 +40,116 @@ function initWeb4U() {
     var baseCallLink = document.querySelector('a[href^="tel:"]');
     var baseWhatsAppLink = document.querySelector('a[href*="wa.me/"]');
     var navLinks = document.querySelector(".nav-links");
+    var nav = document.querySelector(".nav");
 
     if (navLinks) {
-        var toggle = navLinks.querySelector(".theme-toggle");
-        if (!toggle) {
-            toggle = document.createElement("button");
-            toggle.type = "button";
-            toggle.className = "theme-toggle";
-            toggle.textContent = "Dark";
-            toggle.setAttribute("aria-label", "Toggle dark mode");
-            navLinks.appendChild(toggle);
+        if (nav) {
+            nav.classList.add("has-mobile-menu");
         }
 
-        if (toggle.dataset.toggleBound !== "true") {
+        if (!navLinks.id) {
+            navLinks.id = "site-nav-links";
+        }
+
+        var menuToggle = nav ? nav.querySelector(".nav-menu-toggle") : null;
+        if (nav && !menuToggle) {
+            menuToggle = document.createElement("button");
+            menuToggle.type = "button";
+            menuToggle.className = "nav-menu-toggle";
+            menuToggle.setAttribute("aria-controls", navLinks.id);
+            menuToggle.setAttribute("aria-expanded", "false");
+            menuToggle.setAttribute("aria-label", "Open menu");
+            menuToggle.innerHTML = "<span></span><span></span><span></span>";
+            nav.insertBefore(menuToggle, navLinks);
+        }
+
+        var desktopThemeToggle = navLinks.querySelector(".theme-toggle");
+        if (!desktopThemeToggle) {
+            desktopThemeToggle = document.createElement("button");
+            desktopThemeToggle.type = "button";
+            desktopThemeToggle.className = "theme-toggle";
+            desktopThemeToggle.textContent = "Dark";
+            desktopThemeToggle.setAttribute("aria-label", "Toggle dark mode");
+            navLinks.appendChild(desktopThemeToggle);
+        }
+
+        var mobileThemeToggle = nav ? nav.querySelector(".theme-toggle-mobile") : null;
+        if (nav && !mobileThemeToggle) {
+            mobileThemeToggle = document.createElement("button");
+            mobileThemeToggle.type = "button";
+            mobileThemeToggle.className = "theme-toggle theme-toggle-mobile";
+            mobileThemeToggle.textContent = "Dark";
+            mobileThemeToggle.setAttribute("aria-label", "Toggle dark mode");
+            if (menuToggle) {
+                nav.insertBefore(mobileThemeToggle, menuToggle);
+            } else {
+                nav.insertBefore(mobileThemeToggle, navLinks);
+            }
+        }
+
+        var isMobileViewport = function () {
+            if (window.matchMedia) return window.matchMedia("(max-width: 700px)").matches;
+            return window.innerWidth <= 700;
+        };
+
+        var setMobileMenuOpen = function (isOpen) {
+            navLinks.classList.toggle("is-open", isOpen);
+            if (menuToggle) {
+                menuToggle.classList.toggle("is-open", isOpen);
+                menuToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+                menuToggle.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
+            }
+        };
+
+        if (menuToggle && menuToggle.dataset.menuBound !== "true") {
+            menuToggle.dataset.menuBound = "true";
+            menuToggle.addEventListener("click", function () {
+                setMobileMenuOpen(!navLinks.classList.contains("is-open"));
+            });
+        }
+
+        if (navLinks.dataset.mobileCloseBound !== "true") {
+            navLinks.dataset.mobileCloseBound = "true";
+            navLinks.addEventListener("click", function (event) {
+                if (!isMobileViewport()) return;
+                if (event.target.closest("a")) {
+                    setMobileMenuOpen(false);
+                }
+            });
+        }
+
+        if (nav && nav.dataset.mobileOutsideBound !== "true") {
+            nav.dataset.mobileOutsideBound = "true";
+            document.addEventListener("click", function (event) {
+                if (!isMobileViewport()) return;
+                if (!navLinks.classList.contains("is-open")) return;
+                if (!nav.contains(event.target)) {
+                    setMobileMenuOpen(false);
+                }
+            });
+        }
+
+        if (nav && nav.dataset.mobileEscapeBound !== "true") {
+            nav.dataset.mobileEscapeBound = "true";
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "Escape") {
+                    setMobileMenuOpen(false);
+                }
+            });
+        }
+
+        if (nav && nav.dataset.mobileResizeBound !== "true") {
+            nav.dataset.mobileResizeBound = "true";
+            window.addEventListener("resize", function () {
+                if (!isMobileViewport()) {
+                    setMobileMenuOpen(false);
+                }
+            });
+        }
+
+        var toggles = document.querySelectorAll(".theme-toggle");
+        toggles.forEach(function (toggle) {
+            if (toggle.dataset.toggleBound === "true") return;
             toggle.dataset.toggleBound = "true";
             toggle.addEventListener("click", function () {
                 activeTheme = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
@@ -64,7 +161,7 @@ function initWeb4U() {
                 applyTheme(activeTheme);
                 trackEvent("theme_toggle", { theme: activeTheme });
             });
-        }
+        });
     }
 
     applyTheme(root.getAttribute("data-theme") || activeTheme);
