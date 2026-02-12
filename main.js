@@ -19,7 +19,7 @@ function initWeb4U() {
         root.setAttribute("data-theme", theme);
         var toggleButtons = document.querySelectorAll(".theme-toggle");
         toggleButtons.forEach(function (toggleBtn) {
-            toggleBtn.textContent = theme === "dark" ? "Light" : "Dark";
+            toggleBtn.textContent = theme === "dark" ? "Dark" : "Light";
             toggleBtn.setAttribute("aria-label", theme === "dark" ? "Switch to light mode" : "Switch to dark mode");
         });
     }
